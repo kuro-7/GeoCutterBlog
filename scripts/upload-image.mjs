@@ -24,8 +24,10 @@ function upload() {
   }
 
   const image = createImageKey(articleId, filePath, readFileSync(filePath));
-  const configHome = process.env.XDG_CONFIG_HOME || join(tmpdir(), 'geocutter-blog-wrangler');
-  mkdirSync(configHome, { recursive: true });
+  const logPath = process.env.WRANGLER_LOG_PATH ?? join(tmpdir(), 'geocutter-blog-wrangler');
+  if (process.env.WRANGLER_LOG_PATH === undefined) {
+    mkdirSync(logPath, { recursive: true });
+  }
 
   const wranglerCli = require.resolve('wrangler');
   const result = spawnSync(
@@ -45,7 +47,7 @@ function upload() {
       '--remote',
     ],
     {
-      env: { ...process.env, XDG_CONFIG_HOME: configHome },
+      env: { ...process.env, WRANGLER_LOG_PATH: logPath },
       shell: false,
       stdio: 'inherit',
     },
