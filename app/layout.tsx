@@ -6,6 +6,8 @@ import Nav from '@/components/Nav';
 import './globals.css';
 import styles from './layout.module.css';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   metadataBase: new URL(process.env.BASE_URL || 'http://localhost:3000'),
   title: {

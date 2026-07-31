@@ -1,8 +1,18 @@
-# シンプルなブログ
+# GeoCutter Blog
 
-![](public/img-cover.png)
+microCMS 公式のシンプルなブログテンプレートを基にした GeoCutter 公式ブログです。
 
-microCMS 公式のシンプルなブログのテンプレートです。
+## 採用元
+
+このリポジトリは [microCMS 公式 Next.js シンプルブログテンプレート](https://github.com/microcmsio/nextjs-simple-blog-template)
+を次のコミットから利用しています。
+
+```text
+2268ac5215244db7891c3d2bcb6571e0ff79210c
+```
+
+upstream の履歴は変更せず、更新は固定コミットを確認してから手動で行います。
+ライセンスは MIT です。詳細は [LICENSE](LICENSE) を参照してください。
 
 ## 動作環境
 
@@ -10,12 +20,12 @@ Node.js 24 以上
 
 ## 環境変数の設定
 
-ルート直下に`.env`ファイルを作成し、下記の情報を入力してください。
+ルート直下に`.env.local`ファイルを作成し、下記の情報を入力してください。
 
 ```
 MICROCMS_API_KEY=xxxxxxxxxx
 MICROCMS_SERVICE_DOMAIN=xxxxxxxxxx
-BASE_URL=xxxxxxxxxx
+BASE_URL=http://localhost:3000
 ```
 
 `MICROCMS_API_KEY`  
@@ -29,22 +39,14 @@ microCMS 管理画面の URL（https://xxxxxxxx.microcms.io）の xxxxxxxx の�
 
 例）  
 開発環境 → http://localhost:3000  
-本番環境 → https://xxxxxxxx.vercel.app/ など
-
-### GitHub Actionsへの環境変数の設定
-
-このリポジトリではPlaywrightによるE2Eテストが実装されています。
-GitHubに変更をプッシュする、あるいはPull Requestを作成すると自動でテストが実行されます。
-
-利用するにはGitHub Actionsのシークレットへの設定が必要です。
-[こちらの手順](https://docs.github.com/ja/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets)に従って、`MICROCMS_API_KEY`と`MICROCMS_SERVICE_DOMAIN`をシークレットに設定してください。
+本番環境 → https://geocutter.com/blog
 
 ## 開発の仕方
 
 1. パッケージのインストール
 
 ```bash
-npm install
+npm ci
 ```
 
 2. 開発環境の起動
@@ -53,8 +55,15 @@ npm install
 npm run dev
 ```
 
-3. 開発環境へのアクセス  
-   [http://localhost:3000](http://localhost:3000)にアクセス
+3. テストと build
+
+```bash
+npm run test
+npm run build
+```
+
+4. 開発環境へのアクセス
+   [http://localhost:3000/blog](http://localhost:3000/blog)にアクセス
 
 ## 画面プレビューの設定
 
@@ -67,13 +76,12 @@ npm run dev
 
 設定後はコンテンツ編集画面にて画面プレビューボタンが利用可能になります。
 
-## Vercel へのデプロイ
+## Cloudflare 構成
 
-[Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)から簡単にデプロイが可能です。
-
-リポジトリを紐付け、環境変数を `Environment Variables` に登録後、デプロイしてみましょう。
-
-![](public/img-vercel-settings.png)
+- production Worker は `geocutter-blog`、staging は `geocutter-blog-staging` です。
+- production route は `geocutter.com/blog*`、staging route は `staging.geocutter.com/blog*` です。
+- Blog Worker に R2、Images、D1、KV、Queues の binding は付けません。
+- API key は `.env.local` または Worker secret にだけ設定します。
 
 ## Node.js のバージョンについて
 

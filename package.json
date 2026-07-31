@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test": "node --test",
+    "check": "npm run test && npm run build",
+    "preview": "opennextjs-cloudflare build --env=staging && opennextjs-cloudflare preview --env=staging",
+    "deploy:staging": "opennextjs-cloudflare build --env=staging && opennextjs-cloudflare deploy --env=staging",
+    "deploy:production": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "image:upload": "node scripts/upload-image.mjs",
+    "format": "prettier --write --ignore-path .gitignore './**/*.{js,mjs,ts,tsx,json,jsonc,css,md}'"
   },
   "prettier": {
     "trailingComma": "all",
@@ -23,6 +25,7 @@
     "node": ">=24.x"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "1.20.2",
     "@types/node": "^24.1.0",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
@@ -37,10 +40,12 @@
     "next": "^15.5.18",
     "prettier": "^3.5.3",
     "react": "^19.2.4",
+    "react-markdown": "10.1.0",
     "react-dom": "^19.2.4",
+    "remark-gfm": "4.0.1",
     "typescript": "^5.8.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.54.2"
+    "wrangler": "4.105.0"
   }
 }

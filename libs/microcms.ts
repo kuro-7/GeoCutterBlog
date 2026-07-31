@@ -33,23 +33,24 @@ export type Blog = {
 
 export type Article = Blog & MicroCMSContentId & MicroCMSDate;
 
-if (!process.env.MICROCMS_SERVICE_DOMAIN) {
-  throw new Error('MICROCMS_SERVICE_DOMAIN is required');
-}
+const getClient = () => {
+  const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
+  const apiKey = process.env.MICROCMS_API_KEY;
 
-if (!process.env.MICROCMS_API_KEY) {
-  throw new Error('MICROCMS_API_KEY is required');
-}
+  if (!serviceDomain) {
+    throw new Error('MICROCMS_SERVICE_DOMAIN is required');
+  }
 
-// Initialize Client SDK.
-export const client = createClient({
-  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN,
-  apiKey: process.env.MICROCMS_API_KEY,
-});
+  if (!apiKey) {
+    throw new Error('MICROCMS_API_KEY is required');
+  }
+
+  return createClient({ serviceDomain, apiKey });
+};
 
 // ブログ一覧を取得
 export const getList = async (queries?: MicroCMSQueries) => {
-  const listData = await client
+  const listData = await getClient()
     .getList<Blog>({
       endpoint: 'blog',
       queries,
@@ -60,7 +61,7 @@ export const getList = async (queries?: MicroCMSQueries) => {
 
 // ブログの詳細を取得
 export const getDetail = async (contentId: string, queries?: MicroCMSQueries) => {
-  const detailData = await client
+  const detailData = await getClient()
     .getListDetail<Blog>({
       endpoint: 'blog',
       contentId,
@@ -73,7 +74,7 @@ export const getDetail = async (contentId: string, queries?: MicroCMSQueries) =>
 
 // タグの一覧を取得
 export const getTagList = async (queries?: MicroCMSQueries) => {
-  const listData = await client
+  const listData = await getClient()
     .getList<Tag>({
       endpoint: 'tags',
       queries,
@@ -85,7 +86,7 @@ export const getTagList = async (queries?: MicroCMSQueries) => {
 
 // タグの詳細を取得
 export const getTag = async (contentId: string, queries?: MicroCMSQueries) => {
-  const detailData = await client
+  const detailData = await getClient()
     .getListDetail<Tag>({
       endpoint: 'tags',
       contentId,

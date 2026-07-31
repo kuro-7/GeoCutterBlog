@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "geocutter-blog",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-07-31",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "geocutter.com/blog*",
+      "zone_name": "geocutter.com"
+    }
+  ],
+  "vars": {
+    "MICROCMS_SERVICE_DOMAIN": "geocutter-blog"
+  },
+  "observability": {
+    "enabled": false
+  },
+  "env": {
+    "staging": {
+      "name": "geocutter-blog-staging",
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [
+        {
+          "pattern": "staging.geocutter.com/blog*",
+          "zone_name": "geocutter.com"
+        }
+      ],
+      "vars": {
+        "MICROCMS_SERVICE_DOMAIN": "geocutter-blog"
+      },
+      "observability": {
+        "enabled": false
+      }
+    }
+  }
+}
