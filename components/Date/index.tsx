@@ -1,16 +1,24 @@
-import Image from 'next/image';
-import { formatDate } from '@/libs/utils';
 import styles from './index.module.css';
+
+const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
+  timeZone: 'Asia/Tokyo',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+export const formatDate = (value: string) => dateFormatter.format(new globalThis.Date(value));
 
 type Props = {
   date: string;
+  label?: string;
 };
 
-export default function PublishedDate({ date }: Props) {
+export default function Date({ date, label }: Props) {
   return (
-    <span className={styles.date}>
-      <Image src="/clock.svg" alt="" width={16} height={16} priority />
+    <time className={styles.date} dateTime={date}>
+      {label ? `${label}: ` : ''}
       {formatDate(date)}
-    </span>
+    </time>
   );
 }

@@ -1,17 +1,24 @@
 .wrapper {
-  margin: 4rem 0;
   display: flex;
-  gap: 24px;
-  border-top: 1px solid var(--color-border-light);
+  gap: 1.5rem;
+  margin: 4rem 0 2rem;
   padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
 }
 
 .icon {
-  display: block;
+  display: flex;
   width: 96px;
   height: 96px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 96px;
   border-radius: 50%;
   object-fit: cover;
+  background: var(--color-surface-elevated);
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  text-align: center;
 }
 
 .content {
@@ -19,18 +26,19 @@
 }
 
 .name {
-  font-size: 1rem;
+  margin-bottom: 0.35rem;
   font-weight: bold;
-  padding-bottom: 0.5rem;
 }
 
 .profile {
-  font-size: 0.8rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 719px) {
   .icon {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
+    flex-basis: 64px;
   }
 }

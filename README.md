@@ -25,7 +25,6 @@ Node.js 24 以上
 ```
 MICROCMS_API_KEY=xxxxxxxxxx
 MICROCMS_SERVICE_DOMAIN=xxxxxxxxxx
-BASE_URL=http://localhost:3000
 ```
 
 `MICROCMS_API_KEY`  
@@ -33,13 +32,6 @@ microCMS 管理画面の「サービス設定 > API キー」から確認する�
 
 `MICROCMS_SERVICE_DOMAIN`  
 microCMS 管理画面の URL（https://xxxxxxxx.microcms.io）の xxxxxxxx の部分です。
-
-`BASE_URL`
-デプロイ先の URL です。プロトコルから記載してください。
-
-例）  
-開発環境 → http://localhost:3000  
-本番環境 → https://geocutter.com/blog
 
 ## 開発の仕方
 
@@ -65,46 +57,24 @@ npm run build
 4. 開発環境へのアクセス
    [http://localhost:3000/blog](http://localhost:3000/blog)にアクセス
 
-## 画面プレビューの設定
-
-下書き状態のコンテンツをプレビューするために、microCMS管理画面にて画面プレビューの設定が必要です。
-
-ブログAPIの「API設定 > 画面プレビュー」に下記のように設定してください。  
-※`your-domain`部分はデプロイ先のドメインに置き換えてください。（localhost指定でも動作します）
-
-![blog-preview](https://github.com/microcmsio/nextjs-simple-blog-template/assets/4659294/5045ac9e-3699-47b4-8927-4187114d75bd)
-
-設定後はコンテンツ編集画面にて画面プレビューボタンが利用可能になります。
-
 ## Cloudflare 構成
 
-- production Worker は `geocutter-blog`、staging は `geocutter-blog-staging` です。
-- production route は `geocutter.com/blog*`、staging route は `staging.geocutter.com/blog*` です。
-- Blog Worker に R2、Images、D1、KV、Queues の binding は付けません。
-- API key は `.env.local` または Worker secret にだけ設定します。
+production Workerは`geocutter-blog`、stagingは`geocutter-blog-staging`、routeはそれぞれ`geocutter.com/blog*`と`staging.geocutter.com/blog*`です。Blog WorkerにR2、Images、D1、KV、Queuesのbindingは付けません。
+API keyは`.env.local`とWorker secretにだけ置き、Git、`wrangler.jsonc`、`NEXT_PUBLIC_*`、ブラウザ、R2 metadataには置きません。
+## microCMS schema
 
-## Node.js のバージョンについて
+`microcms-template.json`をschema mirrorとして、microCMS Hobbyに次の3 APIを手動作成します。画像はmedia fieldにせず、R2公開URLのtext fieldに保存します。
 
-このテンプレートは **Node.js 24 以上**を前提としています。
+`writers`: `name` text必須、`profile` textArea必須、`imageUrl`/`imageAlt` text任意。`tags`: `name` text必須。`blog`: `title` text必須、`description`/`body` textArea必須、`thumbnailUrl`/`thumbnailAlt` text必須、`tags` tagsへのrelationList必須、`writer` writersへのrelation必須。
 
-Node.js では定期的にセキュリティアップデートが提供されています。  
-安全にご利用いただくため、Node.js を利用する際は
-**利用中のメジャーバージョン（例: 24.x）の最新パッチバージョンを使用することを推奨します。**
+`imageUrl`と`imageAlt`は両方入力するか両方空にします。初期writerは、content ID `geocutter-official`、name `GeoCutter公式`、profile `人口で地図を切る地理パズルゲーム「GeoCutter」の公式ブログです。遊び方、攻略、地理・人口データを紹介します。`、画像URL/alt空、status公開です。
 
-最新のセキュリティ情報については、以下をご参照ください。
-https://nodejs.org/ja/blog/vulnerability/
+記事の content ID がそのまま `/blog/articles/<content-id>` の slug になります。
 
-## このテンプレートに含まれる `.npmrc` について
+## 画面プレビューの設定
 
-このテンプレートには、npm の `min-release-age` と `registry` 設定を有効にするための `.npmrc` ファイルが含まれています。
+ブログAPIの「API設定 > 画面プレビュー」には`https://staging.geocutter.com/blog/articles/{CONTENT_ID}?dk={DRAFT_KEY}`を設定します。
 
-```ini
-min-release-age=7
-registry=https://npm.flatt.tech
-```
+production URLは使わず、`DRAFT_KEY`はGit、チャット通常ログ、スクリーンショット、テスト結果へ保存しません。
 
-`min-release-age` はサプライチェーン攻撃対策の一環として設定しているもので、公開から7日未満の npm パッケージバージョンをインストール対象から除外します。これにより、悪意のあるパッケージや改ざんされたパッケージが公開直後に利用されるリスクを軽減できます。
-
-`registry` はレジストリを [Takumi Guard](https://flatt.tech/takumi/features/guard)（GMO Flatt Security が提供する npm セキュリティプロキシ）に向けるもので、`npm install` 時にパッケージを既知の脅威データベースと照合し、悪意のあるパッケージのインストールをブロックします。トークンなしの匿名利用で有効になり、追加の設定は不要です。この設定はローカルだけでなく、GitHub Actions や Dependabot による依存更新にも適用されます。
-
-プロジェクトの要件や運用方針に応じて、これらの値を変更したり、設定を削除したりすることも可能です。
+このリポジトリの `.npmrc` は security 設定を含むため、変更・削除しません。

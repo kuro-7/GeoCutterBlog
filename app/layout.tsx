@@ -1,5 +1,6 @@
+import type { Metadata } from 'next';
 import { getTagList } from '@/libs/microcms';
-import { LIMIT } from '@/constants';
+import { DEFAULT_OG_IMAGE, PRODUCTION_ORIGIN, TAG_LIMIT } from '@/constants';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Nav from '@/components/Nav';
@@ -8,23 +9,23 @@ import styles from './layout.module.css';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = {
-  metadataBase: new URL(process.env.BASE_URL || 'http://localhost:3000'),
+export const metadata: Metadata = {
+  metadataBase: new URL(PRODUCTION_ORIGIN),
   title: {
-    template: '%s | Simple Blog',
-    default: 'Simple Blog',
+    template: '%s | GeoCutter 攻略・解説ブログ',
+    default: 'GeoCutter 攻略・解説ブログ',
   },
-  description: 'A simple blog presented by microCMS',
+  description: '人口で地図を切るゲーム「GeoCutter」の遊び方、攻略、地理・人口データを紹介する公式ブログです。',
   openGraph: {
-    title: {
-      template: '%s | Simple Blog',
-      default: 'Simple Blog',
-    },
-    description: 'A simple blog presented by microCMS',
-    images: '/ogp.png',
+    title: 'GeoCutter 攻略・解説ブログ',
+    description: '人口で地図を切るゲーム「GeoCutter」の遊び方、攻略、地理・人口データを紹介する公式ブログです。',
+    url: `${PRODUCTION_ORIGIN}/blog`,
+    siteName: 'GeoCutter 攻略・解説ブログ',
+    type: 'website',
+    images: [DEFAULT_OG_IMAGE],
   },
   alternates: {
-    canonical: '/',
+    canonical: `${PRODUCTION_ORIGIN}/blog`,
   },
 };
 
@@ -33,9 +34,8 @@ type Props = {
 };
 
 export default async function RootLayout({ children }: Props) {
-  const tags = await getTagList({
-    limit: LIMIT,
-  });
+  const tags = await getTagList({ limit: TAG_LIMIT });
+
   return (
     <html lang="ja">
       <body>

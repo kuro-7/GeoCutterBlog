@@ -1,37 +1,35 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { getList } from '@/libs/microcms';
+import { ARTICLE_LIMIT, normalizeSearchQuery, PRODUCTION_ORIGIN } from '@/constants';
 import ArticleList from '@/components/ArticleList';
 import Pagination from '@/components/Pagination';
 
 type Props = {
-  searchParams: Promise<{
-    q?: string;
-  }>;
+  searchParams: Promise<{ q?: string }>;
 };
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const searchParams = await props.searchParams;
+  const query = normalizeSearchQuery((await props.searchParams).q);
   return {
-    title: '「' + searchParams.q + '」の検索結果',
-    openGraph: {
-      title: '「' + searchParams.q + '」の検索結果',
-    },
+    title: query ? `「${query}」の検索結果` : '記事検索',
     alternates: {
-      canonical: `/search?q=${searchParams.q}`,
+      canonical: `${PRODUCTION_ORIGIN}/blog/search${query ? `?q=${encodeURIComponent(query)}` : ''}`,
     },
+    robots: { index: false, follow: true },
   };
 }
 
 export default async function Page(props: Props) {
-  const searchParams = await props.searchParams;
+  const query = normalizeSearchQuery((await props.searchParams).q);
   const data = await getList({
-    q: searchParams.q,
+    limit: ARTICLE_LIMIT,
+    ...(query ? { q: query } : {}),
   });
 
   return (
     <>
       <ArticleList articles={data.contents} />
-      <Pagination totalCount={data.totalCount} basePath="/search" q={searchParams.q} />
+      <Pagination totalCount={data.totalCount} basePath="/search" q={query} />
     </>
   );
 }

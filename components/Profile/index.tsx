@@ -1,33 +1,27 @@
-import styles from './index.module.css';
 import { Writer } from '@/libs/microcms';
+import R2Image from '../R2Image';
+import styles from './index.module.css';
 
 type Props = {
-  writer?: Writer | null;
+  writer: Writer;
 };
 
 export default function Profile({ writer }: Props) {
-  if (!writer) {
-    return null;
-  }
   return (
-    <div className={styles.wrapper}>
-      <picture>
-        <source
-          type="image/webp"
-          srcSet={`${writer?.image?.url}?fm=webp&fit=crop&96&h=96 1x, ${writer?.image?.url}?fm=webp&fit=crop&w=96&h=96&dpr=2 2x`}
-        />
-        <img
-          src={writer?.image?.url}
-          alt=""
+    <section className={styles.wrapper} aria-label="著者プロフィール">
+      {writer.imageUrl && writer.imageAlt && (
+        <R2Image
+          src={writer.imageUrl}
+          alt={writer.imageAlt}
           className={styles.icon}
-          width={writer?.image?.width}
-          height={writer?.image?.height}
+          sizes="96px"
+          fallbackWidth={480}
         />
-      </picture>
+      )}
       <div className={styles.content}>
-        <p className={styles.name}>{writer?.name}</p>
-        <p className={styles.profile}>{writer?.profile}</p>
+        <p className={styles.name}>{writer.name}</p>
+        <p className={styles.profile}>{writer.profile}</p>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,7 +1,13 @@
 .tag {
-  background-color: var(--color-bg-sub);
-  padding: 4px 8px;
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-accent-cool);
   font-size: 0.8rem;
-  border-radius: var(--border-radius);
   white-space: nowrap;
+}
+
+.tag:hover {
+  border-color: var(--color-accent-cool);
 }

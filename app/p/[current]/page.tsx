@@ -1,31 +1,39 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { getList } from '@/libs/microcms';
-import { LIMIT } from '@/constants';
+import { ARTICLE_LIMIT, parsePage, PRODUCTION_ORIGIN } from '@/constants';
 import Pagination from '@/components/Pagination';
 import ArticleList from '@/components/ArticleList';
 
 type Props = {
-  params: Promise<{
-    current: string;
-  }>;
+  params: Promise<{ current: string }>;
 };
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params;
+  const { current } = await props.params;
   return {
     alternates: {
-      canonical: `/p/${params.current}`,
+      canonical: `${PRODUCTION_ORIGIN}/blog/p/${current}`,
     },
+    robots: { index: false, follow: true },
   };
 }
 
 export default async function Page(props: Props) {
-  const params = await props.params;
-  const current = parseInt(params.current as string, 10);
+  const { current: rawCurrent } = await props.params;
+  const current = parsePage(rawCurrent);
+  if (!current) {
+    notFound();
+  }
+
   const data = await getList({
-    limit: LIMIT,
-    offset: LIMIT * (current - 1),
+    limit: ARTICLE_LIMIT,
+    offset: ARTICLE_LIMIT * (current - 1),
   });
+  if (current > Math.max(1, Math.ceil(data.totalCount / ARTICLE_LIMIT))) {
+    notFound();
+  }
+
   return (
     <>
       <ArticleList articles={data.contents} />

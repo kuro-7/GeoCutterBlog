@@ -1,19 +1,20 @@
 import Link from 'next/link';
-import { Tag } from '@/libs/microcms';
+import { TagSummary } from '@/libs/microcms';
 import styles from './index.module.css';
 
 type Props = {
-  tag: Tag;
+  tag: TagSummary;
   hasLink?: boolean;
 };
 
 export default function TagListItem({ tag, hasLink = true }: Props) {
-  if (hasLink) {
-    return (
-      <Link href={`/tags/${tag.id}`} className={styles.tag}>
-        #{tag.name}
-      </Link>
-    );
+  const content = `#${tag.name}`;
+  if (!hasLink) {
+    return <span className={styles.tag}>{content}</span>;
   }
-  return <span className={styles.tag}>#{tag.name}</span>;
+  return (
+    <Link href={`/tags/${tag.id}`} className={styles.tag}>
+      {content}
+    </Link>
+  );
 }

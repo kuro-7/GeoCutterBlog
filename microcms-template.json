@@ -1,1 +1,42 @@
-{"name":"template","plan":"Hobby","schema":[{"apiId":"API#abcc75ab-d330-4d1d-b617-115086aa1472","apiName":"ライター","apiEndpoint":"writers","apiType":"LIST","apiFields":[{"idValue":"63Px-vWPpR","fieldId":"name","name":"表示名","kind":"text"},{"idValue":"-WS9qvKpLN","fieldId":"profile","name":"プロフィール文","kind":"textArea"},{"idValue":"MbEFShMbpw","fieldId":"image","name":"画像","kind":"media"}],"customFields":[]},{"apiId":"API#489045ef-7e6d-4d26-aa92-3f6a3838eab6","apiName":"タグ","apiEndpoint":"tags","apiType":"LIST","apiFields":[{"idValue":"UnuCxoeTDL","fieldId":"name","name":"タグ名","kind":"text"}],"customFields":[]},{"apiId":"API#e408eda4-c9ca-4ccf-9ee5-ebcb9057bfdc","apiName":"ブログ","apiEndpoint":"blog","apiType":"LIST","apiFields":[{"idValue":"k4JiHTLAnk","fieldId":"title","name":"タイトル","kind":"text"},{"idValue":"bBbJJZryBm","fieldId":"description","name":"概要","kind":"textArea"},{"idValue":"lfyeSiGnAH","fieldId":"content","name":"本文","kind":"richEditorV2","customClassList":[{"id":"OvfYc2S7Yv","name":"マーカー","value":"marker"}]},{"idValue":"CRNO9YkC1_","fieldId":"thumbnail","name":"サムネイル画像","kind":"media"},{"idValue":"yqp2kwTcqz","fieldId":"tags","name":"タグ","kind":"relationList","referenceKey":"API#489045ef-7e6d-4d26-aa92-3f6a3838eab6"},{"idValue":"uFAzjRFFmk","fieldId":"writer","name":"ライター","kind":"relation","referenceKey":"API#abcc75ab-d330-4d1d-b617-115086aa1472"}],"customFields":[]}]}
+{
+  "name": "GeoCutter Blog",
+  "plan": "Hobby",
+  "schema": [
+    {
+      "apiName": "著者",
+      "apiEndpoint": "writers",
+      "apiType": "LIST",
+      "apiFields": [
+        { "fieldId": "name", "name": "表示名", "kind": "text", "required": true },
+        { "fieldId": "profile", "name": "プロフィール文", "kind": "textArea", "required": true },
+        { "fieldId": "imageUrl", "name": "プロフィール画像URL", "kind": "text", "required": false },
+        { "fieldId": "imageAlt", "name": "プロフィール画像の代替テキスト", "kind": "text", "required": false }
+      ],
+      "customFields": []
+    },
+    {
+      "apiName": "タグ",
+      "apiEndpoint": "tags",
+      "apiType": "LIST",
+      "apiFields": [
+        { "fieldId": "name", "name": "タグ名", "kind": "text", "required": true }
+      ],
+      "customFields": []
+    },
+    {
+      "apiName": "ブログ",
+      "apiEndpoint": "blog",
+      "apiType": "LIST",
+      "apiFields": [
+        { "fieldId": "title", "name": "タイトル", "kind": "text", "required": true },
+        { "fieldId": "description", "name": "概要", "kind": "textArea", "required": true },
+        { "fieldId": "body", "name": "本文Markdown", "kind": "textArea", "required": true },
+        { "fieldId": "thumbnailUrl", "name": "サムネイルURL", "kind": "text", "required": true },
+        { "fieldId": "thumbnailAlt", "name": "サムネイルの代替テキスト", "kind": "text", "required": true },
+        { "fieldId": "tags", "name": "タグ", "kind": "relationList", "referenceEndpoint": "tags", "required": true },
+        { "fieldId": "writer", "name": "著者", "kind": "relation", "referenceEndpoint": "writers", "required": true }
+      ],
+      "customFields": []
+    }
+  ]
+}

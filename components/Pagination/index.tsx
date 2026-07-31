@@ -1,6 +1,6 @@
 import Link from 'next/link';
+import { ARTICLE_LIMIT } from '@/constants';
 import styles from './index.module.css';
-import { LIMIT } from '@/constants';
 
 type Props = {
   totalCount: number;
@@ -10,20 +10,32 @@ type Props = {
 };
 
 export default function Pagination({ totalCount, current = 1, basePath = '', q }: Props) {
-  const pages = Array.from({ length: Math.ceil(totalCount / LIMIT) }).map((_, i) => i + 1);
+  const pageCount = Math.ceil(totalCount / ARTICLE_LIMIT);
+  if (pageCount <= 1) {
+    return null;
+  }
+
   return (
-    <ul className={styles.container}>
-      {pages.map((p) => (
-        <li className={styles.list} key={p}>
-          {current !== p ? (
-            <Link href={`${basePath}/p/${p}` + (q ? `?q=${q}` : '')} className={styles.item}>
-              {p}
-            </Link>
-          ) : (
-            <span className={`${styles.item} ${styles.current}`}>{p}</span>
-          )}
-        </li>
-      ))}
-    </ul>
+    <nav aria-label="ページネーション">
+      <ul className={styles.container}>
+        {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => {
+          const query = q ? `?${new URLSearchParams({ q }).toString()}` : '';
+          const href = `${basePath}/p/${page}${query}`;
+          return (
+            <li className={styles.list} key={page}>
+              {current === page ? (
+                <span className={`${styles.item} ${styles.current}`} aria-current="page">
+                  {page}
+                </span>
+              ) : (
+                <Link href={href} className={styles.item}>
+                  {page}
+                </Link>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }

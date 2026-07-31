@@ -1,21 +1,23 @@
 .container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  padding: 24px;
-  margin-top: 24px;
+  gap: 0.5rem;
+  margin: 2rem 0;
 }
-.list {
-  margin: 0 4px;
-}
+
 .item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--border-radius);
+  display: grid;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  background: var(--color-surface);
 }
+
+.item:hover,
 .current {
-  background-color: var(--color-current);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }

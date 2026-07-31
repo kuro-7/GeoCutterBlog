@@ -1,3 +1,4 @@
 .title {
-  margin-bottom: 2em;
+  margin: 1rem 0 1.5rem;
+  color: var(--color-muted);
 }

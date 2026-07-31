@@ -1,7 +1,4 @@
 .date {
-  display: flex;
-  align-items: center;
-  line-height: 16px;
-  gap: 8px;
-  margin: 0.8rem 0;
+  color: var(--color-muted);
+  font-size: 0.85rem;
 }

@@ -1,50 +1,48 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { getList } from '@/libs/microcms';
-import { LIMIT } from '@/constants';
-import Pagination from '@/components/Pagination';
+import { ARTICLE_LIMIT, normalizeSearchQuery, parsePage, PRODUCTION_ORIGIN } from '@/constants';
 import ArticleList from '@/components/ArticleList';
+import Pagination from '@/components/Pagination';
 
 type Props = {
-  params: Promise<{
-    current: string;
-  }>;
-  searchParams: Promise<{
-    q?: string;
-  }>;
+  params: Promise<{ current: string }>;
+  searchParams: Promise<{ q?: string }>;
 };
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const searchParams = await props.searchParams;
-  const params = await props.params;
+  const { current } = await props.params;
+  const query = normalizeSearchQuery((await props.searchParams).q);
   return {
-    title: '「' + searchParams.q + '」の検索結果',
-    openGraph: {
-      title: '「' + searchParams.q + '」の検索結果',
-    },
+    title: query ? `「${query}」の検索結果` : '記事検索',
     alternates: {
-      canonical: `/search/p/${params.current}?q=${searchParams.q}`,
+      canonical: `${PRODUCTION_ORIGIN}/blog/search/p/${current}${query ? `?q=${encodeURIComponent(query)}` : ''}`,
     },
+    robots: { index: false, follow: true },
   };
 }
 
 export default async function Page(props: Props) {
-  const searchParams = await props.searchParams;
-  const params = await props.params;
-  const current = parseInt(params.current as string, 10);
+  const { current: rawCurrent } = await props.params;
+  const query = normalizeSearchQuery((await props.searchParams).q);
+  const current = parsePage(rawCurrent);
+  if (!current) {
+    notFound();
+  }
+
   const data = await getList({
-    limit: LIMIT,
-    offset: LIMIT * (current - 1),
-    q: searchParams.q,
+    limit: ARTICLE_LIMIT,
+    offset: ARTICLE_LIMIT * (current - 1),
+    ...(query ? { q: query } : {}),
   });
+  if (current > Math.max(1, Math.ceil(data.totalCount / ARTICLE_LIMIT))) {
+    notFound();
+  }
+
   return (
     <>
       <ArticleList articles={data.contents} />
-      <Pagination
-        totalCount={data.totalCount}
-        current={current}
-        basePath="/search"
-        q={searchParams.q}
-      />
+      <Pagination totalCount={data.totalCount} current={current} basePath="/search" q={query} />
     </>
   );
 }

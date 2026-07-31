@@ -1,39 +1,31 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { getList, getTag } from '@/libs/microcms';
-import { LIMIT } from '@/constants';
+import { ARTICLE_LIMIT, PRODUCTION_ORIGIN } from '@/constants';
 import Pagination from '@/components/Pagination';
 import ArticleList from '@/components/ArticleList';
 
 type Props = {
-  params: Promise<{
-    tagId: string;
-    name: string;
-  }>;
+  params: Promise<{ tagId: string }>;
 };
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params;
-  const { tagId } = params;
+  const { tagId } = await props.params;
   const tag = await getTag(tagId);
   return {
     title: tag.name,
-    openGraph: {
-      title: tag.name,
-    },
-    alternates: {
-      canonical: `/tags/${params.tagId}`,
-    },
+    openGraph: { title: tag.name },
+    alternates: { canonical: `${PRODUCTION_ORIGIN}/blog/tags/${tagId}` },
+    robots: { index: false, follow: true },
   };
 }
 
-export default async function Page(props: Props) {
-  const params = await props.params;
-  const { tagId } = params;
+export default async function Page({ params }: Props) {
+  const { tagId } = await params;
   const data = await getList({
-    limit: LIMIT,
+    limit: ARTICLE_LIMIT,
     filters: `tags[contains]${tagId}`,
   });
-  const tag = await getTag(tagId);
+
   return (
     <>
       <ArticleList articles={data.contents} />

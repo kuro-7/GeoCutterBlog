@@ -1,18 +1,19 @@
-import { Tag } from '@/libs/microcms';
+import { TagSummary } from '@/libs/microcms';
 import TagListItem from '../TagListItem';
 import styles from './index.module.css';
 
 type Props = {
-  tags?: Tag[];
+  tags: TagSummary[];
   hasLink?: boolean;
 };
 
 export default function TagList({ tags, hasLink = true }: Props) {
-  if (!tags) {
+  if (tags.length === 0) {
     return null;
   }
+
   return (
-    <ul className={styles.tags}>
+    <ul className={styles.tags} aria-label="タグ">
       {tags.map((tag) => (
         <li key={tag.id}>
           <TagListItem tag={tag} hasLink={hasLink} />
