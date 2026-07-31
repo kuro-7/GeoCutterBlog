@@ -78,3 +78,19 @@ API keyは`.env.local`とWorker secretにだけ置き、Git、`wrangler.jsonc`�
 production URLは使わず、`DRAFT_KEY`はGit、チャット通常ログ、スクリーンショット、テスト結果へ保存しません。
 
 このリポジトリの `.npmrc` は security 設定を含むため、変更・削除しません。
+
+## 画像運用
+
+### R2 upload
+
+次のコマンドで、ローカル画像を既存の `geocutter` bucket へ upload します。
+
+```powershell
+npm run image:upload -- <article-id> <file-path>
+```
+
+`article-id` は `^[a-z0-9]+(?:-[a-z0-9]+)*$` に一致する値、画像は `.png`、`.jpg`、`.jpeg`、`.webp` のみ、サイズは10 MiB以下です。`.jpeg` はR2 keyでは `.jpg` になります。
+
+CLIは `blog/<article-id>/<sha256-first-12>.<extension>` のR2 keyと、`https://cdn.geocutter.com/blog/...` の公開URL、Markdown snippetを表示します。snippetを記事本文へ貼り、公開URLをthumbnailUrlへ、説明文をthumbnailAltへ入力します。ハッシュは内容から生成するため、同じ内容は同じimmutable URLになり、内容を変更すると新しいURLになります。
+
+`blog/` prefixの自動削除、lifecycle rule、孤立画像削除、上書きpurgeは行いません。`blog/` が1 GBを超えたときだけ、孤立画像監査を別タスクで設計します。
