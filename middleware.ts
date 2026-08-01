@@ -77,8 +77,6 @@ export function middleware(request: NextRequest) {
       maxAge: 300,
       path: `/blog${pathname}`,
     });
-  } else if (isDraft) {
-    response.cookies.delete({ name: DRAFT_COOKIE, path: `/blog${pathname}` });
   }
 
   return response;
