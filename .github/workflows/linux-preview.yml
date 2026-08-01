@@ -1,0 +1,45 @@
+name: Linux CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run test
+      - run: npm run build
+      - name: Verify Linux preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_pid=
+          cleanup() {
+            if [[ -n "$preview_pid" ]]; then
+              kill -- "-$preview_pid" 2>/dev/null || true
+              wait "$preview_pid" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+          setsid npm run preview >preview.log 2>&1 &
+          preview_pid=$!
+          for _ in {1..60}; do
+            if status="$(curl --fail --silent --show-error --output preview-response.bin --write-out '%{http_code}' http://127.0.0.1:8787/blog/icon.png)"; then
+              if [[ "$status" == 2?? ]] && [[ -s preview-response.bin ]]; then
+                exit 0
+              fi
+            fi
+            if ! kill -0 "$preview_pid" 2>/dev/null; then
+              cat preview.log
+              exit 1
+            fi
+            sleep 1
+          done
+          cat preview.log
+          exit 1
