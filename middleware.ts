@@ -75,10 +75,10 @@ export function middleware(request: NextRequest) {
       secure: true,
       sameSite: 'lax',
       maxAge: 300,
-      path: request.nextUrl.pathname,
+      path: `/blog${pathname}`,
     });
   } else if (isDraft) {
-    response.cookies.delete({ name: DRAFT_COOKIE, path: request.nextUrl.pathname });
+    response.cookies.delete({ name: DRAFT_COOKIE, path: `/blog${pathname}` });
   }
 
   return response;
