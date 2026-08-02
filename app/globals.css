@@ -1,12 +1,12 @@
 :root {
-  --color-bg: #07131b;
-  --color-surface: #0d202b;
-  --color-surface-elevated: #12303d;
-  --color-text: #f7fbfc;
-  --color-muted: #a8c0c7;
-  --color-accent: #f2b705;
-  --color-accent-cool: #64d4dc;
-  --color-border: rgba(168, 192, 199, 0.25);
+  --color-bg: #fbfaf7;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f3f5f6;
+  --color-text: #1b2833;
+  --color-muted: #52616b;
+  --color-accent: #9a6500;
+  --color-accent-cool: #0b7285;
+  --color-border: rgba(27, 40, 51, 0.16);
   --font-sans: 'IBM Plex Sans JP', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   --font-mono: ui-monospace, Menlo, Monaco, Consolas, monospace;
 }
@@ -18,7 +18,7 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   background: var(--color-bg);
 }
 
