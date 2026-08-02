@@ -74,6 +74,15 @@ test('maps a tag detail request failure to notFound', async () => {
   mock.restoreAll();
 });
 
+test('maps a tag list request failure to notFound', async () => {
+  setCmsEnvironment();
+  installClient({ getList: async () => { throw new Error('CMS unavailable'); } });
+  const { getTagList } = await importMicrocms('tag-list-failure');
+
+  await expectNotFound(getTagList());
+  mock.restoreAll();
+});
+
 test('accepts an empty list but rejects malformed CMS response shapes', async () => {
   setCmsEnvironment();
   installClient({
