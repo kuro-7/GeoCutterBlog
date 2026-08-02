@@ -1,8 +1,8 @@
 import { cache } from 'react';
-import { notFound } from 'next/navigation';
+import { notFound } from 'next/navigation.js';
 import { createClient } from 'microcms-js-sdk';
 import type { MicroCMSContentId, MicroCMSQueries } from 'microcms-js-sdk';
-import { ARTICLE_LIMIT, TAG_LIMIT } from '@/constants';
+import { ARTICLE_LIMIT, TAG_LIMIT } from '../constants/index.ts';
 
 type CMSDates = {
   createdAt: string;
@@ -55,6 +55,45 @@ const ARTICLE_LIST_FIELDS = 'id,title,description,thumbnailUrl,thumbnailAlt,tags
 const ARTICLE_DETAIL_FIELDS = `${ARTICLE_LIST_FIELDS},body,tags.createdAt,tags.updatedAt,tags.publishedAt,tags.revisedAt,writer.createdAt,writer.updatedAt,writer.publishedAt,writer.revisedAt,writer.profile,writer.imageUrl,writer.imageAlt,updatedAt`;
 const TAG_FIELDS = 'id,name,createdAt,updatedAt,publishedAt,revisedAt';
 
+type CMSListResponse<T> = {
+  contents: T[];
+  totalCount: number;
+  offset: number;
+  limit: number;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function validateListResponse<T>(value: unknown): CMSListResponse<T> {
+  if (
+    !isRecord(value) ||
+    !Array.isArray(value.contents) ||
+    typeof value.totalCount !== 'number' ||
+    !Number.isInteger(value.totalCount) ||
+    value.totalCount < 0 ||
+    typeof value.offset !== 'number' ||
+    !Number.isInteger(value.offset) ||
+    value.offset < 0 ||
+    typeof value.limit !== 'number' ||
+    !Number.isInteger(value.limit) ||
+    value.limit < 0
+  ) {
+    throw new Error('Invalid microCMS list response');
+  }
+
+  return value as CMSListResponse<T>;
+}
+
+function validateDetailResponse<T>(value: unknown): T {
+  if (!isRecord(value) || typeof value.id !== 'string' || value.id.length === 0) {
+    throw new Error('Invalid microCMS detail response');
+  }
+
+  return value as T;
+}
+
 const getClient = () => {
   const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
   const apiKey = process.env.MICROCMS_API_KEY;
@@ -81,7 +120,7 @@ export const getList = async <T = ArticleSummary>(queries?: MicroCMSQueries) => 
       },
     })
     .catch(notFound);
-  return data;
+  return validateListResponse<T>(data);
 };
 
 export const getDetail = cache(async (contentId: string, draftKey?: string) => {
@@ -95,7 +134,7 @@ export const getDetail = cache(async (contentId: string, draftKey?: string) => {
       },
     })
     .catch(notFound);
-  return data;
+  return validateDetailResponse<Article>(data);
 });
 
 export const getTagList = async (queries?: MicroCMSQueries) => {
@@ -110,7 +149,7 @@ export const getTagList = async (queries?: MicroCMSQueries) => {
       },
     })
     .catch(notFound);
-  return data;
+  return validateListResponse<Tag>(data);
 };
 
 export const getTag = cache(async (contentId: string) => {
@@ -121,5 +160,5 @@ export const getTag = cache(async (contentId: string) => {
       queries: { fields: TAG_FIELDS },
     })
     .catch(notFound);
-  return data;
+  return validateDetailResponse<Tag>(data);
 });

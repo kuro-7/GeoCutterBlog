@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "node --test",
+    "test": "node --test --experimental-strip-types --experimental-test-module-mocks",
     "check": "npm run test && npm run build",
     "preview": "opennextjs-cloudflare build --env=staging && opennextjs-cloudflare preview --env=staging",
     "deploy:staging": "opennextjs-cloudflare build --env=staging && opennextjs-cloudflare deploy --env=staging",
